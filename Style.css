@@ -19,3 +19,7 @@ input[type=range]{width:100%;margin:10px 0 2px}
 .ev{border-left:3px solid var(--ac);padding:2px 0 2px 10px;margin:8px 0}
 .ev b{color:var(--ac)}
 .note{font-size:.8rem;color:var(--mu)}
+#langs{display:flex;gap:6px;justify-content:flex-end}
+#langs button{background:var(--card);color:var(--tx);border:1px solid var(--mu);border-radius:8px;padding:4px 10px;cursor:pointer}
+#langs button.on{background:var(--ac);color:#000;border-color:var(--ac)}
+#globe{height:62vh;min-height:320px;border-radius:12px;overflow:hidden;background:#000}

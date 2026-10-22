@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="si"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>World History Map</title>
+<link rel="stylesheet" href="style.css">
+</head><body><main>
+<div id="langs">
+<button data-l="0">සිංහල</button><button data-l="1">தமிழ்</button><button data-l="2">English</button>
+</div>
+<h1 data-u="title"></h1>
+<p class="sub" data-u="sub"></p>
+<div id="globe"></div>
+<div class="card">
+<div id="era"></div><div id="desc"></div>
+<input id="s" type="range" min="0" max="4" step="1" value="4">
+<div class="ticks"><span id="t0"></span><span id="t1"></span></div>
+<p class="note" data-u="note"></p>
+</div>
+<div class="card" id="p"></div>
+</main>
+<script src="https://unpkg.com/globe.gl"></script>
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body></html>
