@@ -1,24 +1,73 @@
 <!DOCTYPE html>
 <html lang="si"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>World History Map</title>
+<title>Atlas</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css">
+<style>
+#stage{position:relative;height:72vh;min-height:440px;border-radius:12px;overflow:hidden;background:#000}
+#stage:fullscreen{height:100vh;border-radius:0}
+#stage.fakefs{position:fixed;inset:0;z-index:999;height:100vh;border-radius:0}
+#atlas{position:absolute;inset:0}
+.bar{position:absolute;top:8px;left:8px;z-index:5;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 420px)}
+.bar button,.bar select,.chips button,.wbtn,.tabs button,.yr button,#tm .row button,.btnlike{background:var(--card);color:var(--tx);border:1px solid var(--mu);border-radius:8px;padding:4px 10px;cursor:pointer;font:inherit}
+.bar button.on,.chips button.on,.tabs button.on{background:var(--ac);color:#000;border-color:var(--ac)}
+#tm{position:absolute;top:8px;right:8px;bottom:8px;width:390px;max-width:94%;z-index:6;background:var(--card);border-radius:12px;padding:8px 10px;overflow:auto;box-shadow:0 8px 30px #0008}
+#tm.min{bottom:auto}#tm.min #tmBody{display:none}
+#tm input,#tm select,#tm textarea{width:100%;box-sizing:border-box;margin:3px 0;background:var(--bg);color:var(--tx);border:1px solid var(--mu);border-radius:6px;padding:5px;font:inherit}
+#tm textarea{min-height:48px}
+.tabs,.yr,.chips,.row{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}.row>*{flex:1}.yr input[type=number]{flex:2;text-align:center;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:8px;perspective:900px}
+#tm .cards{grid-template-columns:1fr}
+.k3{background:var(--bg);border-radius:14px;padding:10px;box-shadow:0 12px 28px #0006;transition:transform .15s;transform-style:preserve-3d;margin-top:8px}
+.k3 img{width:100%;height:170px;object-fit:cover;border-radius:10px;transform:translateZ(30px);box-shadow:0 10px 20px #0007}
+.k3 h3{margin:10px 0 4px;transform:translateZ(18px)}.k3 p{font-size:.9rem;margin:0 0 6px}.k3 a{color:var(--ac)}.k3 small{color:var(--mu)}
+.king .fig{perspective:600px;height:190px;display:flex;justify-content:center}
+.king .fig img,.king .fig.ph{width:150px;height:190px;object-fit:cover;border-radius:10px;animation:sway 6s ease-in-out infinite;transform-style:preserve-3d;box-shadow:12px 10px 20px #0009}
+.fig.ph{display:flex;align-items:center;justify-content:center;font-size:64px;background:linear-gradient(145deg,#6b4e1d,#c9a96b)}
+@keyframes sway{0%,100%{transform:rotateY(-28deg)}50%{transform:rotateY(28deg)}}
+.rec{font-size:26px;cursor:pointer;filter:drop-shadow(0 2px 3px #000)}
+.maplibregl-popup-content{color:#111}
+#ex h2{margin:0 0 6px}
+@media(max-width:700px){#tm{left:8px;right:8px;top:auto;width:auto;max-height:55%}.bar{max-width:100%}}
+</style>
 </head><body><main>
-<div id="langs">
-<button data-l="0">සිංහල</button><button data-l="1">தமிழ்</button><button data-l="2">English</button>
+<div id="langs"><button data-l="0">සිංහල</button><button data-l="1">தமிழ்</button><button data-l="2">English</button></div>
+<h1 id="ttl"></h1><p class="sub" id="sub"></p>
+<div id="stage">
+ <div id="atlas"></div>
+ <div class="bar">
+  <button id="bfs"></button><button id="bsat" class="on"></button><button id="b3d"></button><button id="bfly"></button><button id="bhome">🏠</button>
+  <select id="tour"><option value="">📍</option><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option><option value="6"></option><option value="7"></option><option value="8"></option><option value="9"></option></select>
+ </div>
+ <aside id="tm" hidden>
+  <div class="tabs"><button data-t="time" class="on">🕰️</button><button data-t="admin">🔧 Admin</button><button id="tmmin">▁</button></div>
+  <div id="tmBody">
+   <div id="tmTime"></div>
+   <div id="tmAdmin" hidden>
+    <form id="af" onsubmit="return false">
+     <input id="a_c" placeholder="Country (English) e.g. Sri Lanka" list="a_cl"><datalist id="a_cl"></datalist>
+     <select id="a_t"></select>
+     <div class="row"><input id="a_s" type="number" placeholder="Start year (BC = -)"><input id="a_e" type="number" placeholder="End year"></div>
+     <input id="a_ti0" placeholder="සිංහල නම"><input id="a_ti1" placeholder="தமிழ் பெயர்"><input id="a_ti2" placeholder="English title">
+     <textarea id="a_tx0" placeholder="සිංහල විස්තරය"></textarea><textarea id="a_tx1" placeholder="தமிழ் விளக்கம்"></textarea><textarea id="a_tx2" placeholder="English description"></textarea>
+     <input id="a_img" placeholder="Image URL (AI/3D image link) or upload ↓"><input id="a_file" type="file" accept="image/*">
+     <div class="row"><input id="a_lat" placeholder="lat"><input id="a_lng" placeholder="lng"><button id="a_pick" type="button">📍 Map</button></div>
+     <div class="row"><button id="a_save" type="button">💾 Save</button><button id="a_clear" type="button">✖ Clear</button></div>
+    </form>
+    <h4>Records</h4><div id="alist"></div>
+    <div class="row"><button id="a_exp" type="button">⬇ Export</button><label class="btnlike">⬆ Import<input id="a_imp" type="file" accept=".json" hidden></label><button id="a_rst" type="button">♻ Reset</button></div>
+   </div>
+  </div>
+ </aside>
 </div>
-<h1 data-u="title"></h1>
-<p class="sub" data-u="sub"></p>
-<div id="globe"></div>
-<div class="card">
-<div id="era"></div><div id="desc"></div>
-<input id="s" type="range" min="0" max="4" step="1" value="4">
-<div class="ticks"><span id="t0"></span><span id="t1"></span></div>
-<p class="note" data-u="note"></p>
-</div>
+<p class="note" id="err"></p>
+<p><a href="history.html">🕰️ ඉතිහාස ගෝලය / History globe / வரலாற்று உலகம்</a></p>
+<p class="note" id="note"></p>
 <div class="card" id="p"></div>
+<section class="card" id="ex"></section>
 </main>
-<script src="https://unpkg.com/globe.gl"></script>
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="data.js"></script>
-<script src="script.js"></script>
+<script src="atlas.js"></script>
 </body></html>
