@@ -8,9 +8,9 @@ const T={
 ttl:["🗺️ 3D ලෝක සිතියම","🗺️ 3D உலக வரைபடம்","🗺️ 3D World Atlas"],
 sub:["රටක් ඔබන්න → ඒ රටේ අතීතයට වසරින් වසර ගමන් කරන්න. ⛶ ඔබලා සම්පූර්ණ තිරයෙන් බලන්න.","நாட்டைத் தொடுங்கள் → ஆண்டு வாரியாக கடந்த காலத்திற்குச் செல்லுங்கள். ⛶ முழுத்திரையில் பாருங்கள்.","Tap a country → travel back year by year. Use ⛶ for full screen."],
 note:["සටහන: චන්ද්‍රිකා රූප Esri; සිතියම් data OpenStreetMap; ඉතිහාස සීමා historical-basemaps; ලිපි Wikipedia. Admin දත්ත ගබඩා වෙන්නේ ඔයාගේ browser එකේ (Export කරලා සුරකින්න).","குறிப்பு: செயற்கைக்கோள் படங்கள் Esri; வரைபடத் தரவு OpenStreetMap; வரலாற்று எல்லைகள் historical-basemaps; கட்டுரைகள் Wikipedia. Admin தரவு உங்கள் உலாவியில் சேமிக்கப்படும் (Export செய்து சேமிக்கவும்).","Note: satellite imagery Esri; map data OpenStreetMap; historical borders historical-basemaps; articles Wikipedia. Admin data is stored in your browser (use Export to back it up)."],
-bfs:["⛶ සම්පූර්ණ තිරය","⛶ முழுத்திரை","⛶ Full screen"],bsat:["🛰️ චන්ද්‍රිකා","🛰️ செயற்கைக்கோள்","🛰️ Satellite"],b3d:["⛰️ 3D","⛰️ 3D","⛰️ 3D"],bfly:["✈️ පියාසර","✈️ பறக்க","✈️ Fly"],tour:["📍 ස්ථාන","📍 இடங்கள்","📍 Places"]};
+bfs:["⛶ සම්පූර්ණ තිරය","⛶ முழுத்திரை","⛶ Full screen"],bsat:["🛰️ චන්ද්‍රිකා","🛰️ செயற்கைக்கோள்","🛰️ Satellite"],b3d:["⛰️ 3D","⛰️ 3D","⛰️ 3D"],bfly:["✈️ පියාසර","✈️ பறக்க","✈️ Fly"],tour:["📍 ස්ථාන","📍 இடங்கள்","📍 Places"],bplace:["🏛️ ස්ථාන","🏛️ இடங்கள்","🏛️ Places"],bworld:["← ලෝකය","← உலகம்","← World"],ri:["📖 කතාව","📖 கதை","📖 Story"]};
 const TMS={none:["මේ වසරට සටහන් නැහැ. 🔧 Admin වලින් එකතු කරන්න.","இந்த ஆண்டிற்கு பதிவுகள் இல்லை. 🔧 Admin மூலம் சேர்க்கவும்.","No records for this year. Add some via 🔧 Admin."],wiki:["📚 මේ වසර ගැන Wikipedia","📚 இந்த ஆண்டு பற்றி Wikipedia","📚 Wikipedia for this year"]};
-const TY=[["ruler","👑",["රජවරු","அரசர்கள்","Rulers"]],["person","🧑",["පුද්ගලයන්","மக்கள்","People"]],["event","⭐",["සිදුවීම්","நிகழ்வுகள்","Events"]],["place","🏯",["මාලිගා/ස්ථාන","அரண்மனை/இடங்கள்","Palaces/Places"]],["nature","🌿",["පරිසරය","சூழல்","Nature"]],["animal","🐘",["සත්ත්ව","விலங்குகள்","Animals"]],["battle","⚔️",["සටන්","போர்கள்","Battles"]],["culture","🎭",["සංස්කෘතිය","பண்பாடு","Culture"]],["politics","🏛️",["දේශපාලනය","அரசியல்","Politics"]]];
+const TY=[["ruler","👑",["රජවරු","அரசர்கள்","Rulers"]],["person","🧑",["පුද්ගලයන්","மக்கள்","People"]],["event","⭐",["සිදුවීම්","நிகழ்வுகள்","Events"]],["place","🏯",["මාලිගා/ස්ථාන","அரண்மனை/இடங்கள்","Palaces/Places"]],["nature","🌿",["පරිසරය","சூழல்","Nature"]],["animal","🐘",["සත්ත්ව","விலங்குகள்","Animals"]],["battle","⚔️",["සටන්","போர்கள்","Battles"]],["book","📖",["පොත්","நூல்கள்","Books"]],["culture","🎭",["සංස්කෘතිය","பண்பாடு","Culture"]],["politics","🏛️",["දේශපාලනය","அரசியல்","Politics"]]];
 const ERAS=[["",["සියලු යුග","அனைத்து காலம்","All eras"]],["ancient",["පුරාතන","பண்டைய","Ancient"]],["medieval",["මධ්‍යකාලීන","இடைக்கால","Medieval"]],["colonial",["යටත්විජිත","காலனித்துவ","Colonial"]],["modern",["නූතන","நவீன","Modern"]]];
 const eraIdx=y=>y<500?1:y<1500?2:y<1900?3:4;
 const yr=y=>y<0?[`ක්‍රි.පූ. ${-y}`,`கி.மு. ${-y}`,`${-y} BC`][L]:[`ක්‍රි.ව. ${y}`,`கி.பி. ${y}`,`${y} AD`][L];
@@ -42,16 +42,22 @@ if(!Array.isArray(DB))DB=JSON.parse(JSON.stringify(SEED));
 const saveDB=()=>{try{localStorage.setItem("wh-db",JSON.stringify(DB))}catch(e){$("err").textContent="⚠️ Storage full: use smaller images"}};
 
 // ---------- සිතියම ----------
-const map=new maplibregl.Map({container:"atlas",style:"https://tiles.openfreemap.org/styles/liberty",center:[80.77,7.95],zoom:7.5,pitch:0,maxPitch:75});
+const EMPTY={type:"FeatureCollection",features:[]};
+const IMG={std:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",clarity:"https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"};
+const map=new maplibregl.Map({container:"atlas",style:"https://tiles.openfreemap.org/styles/liberty",center:[80.77,7.95],zoom:7.5,pitch:0,maxPitch:75,maxZoom:20});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),"bottom-left");
 let terrain=false,sat=true,spin=false,errT;
 map.on("error",e=>{$("err").textContent="⚠️ "+((e.error&&e.error.message)||"map error");clearTimeout(errT);errT=setTimeout(()=>$("err").textContent="",8000)});
 function labels(){const code=LC[L];
  map.getStyle().layers.forEach(l=>{if(l.id!=="hlab"&&l.type==="symbol"&&l.layout&&l.layout["text-field"])
   map.setLayoutProperty(l.id,"text-field",["coalesce",["get","name:"+code],["get","name:latin"],["get","name"]])})}
-function applySat(){map.getStyle().layers.forEach(l=>{
- if(l.id==="sat")map.setLayoutProperty(l.id,"visibility",sat?"visible":"none");
- else if((l.type==="fill"&&l.id!=="hfill")||l.id==="hs")map.setLayoutProperty(l.id,"visibility",sat?"none":"visible")})}
+const KEEP=new Set(["hfill","cmask"]);
+function applyVis(){const showSat=sat&&!old;map.getStyle().layers.forEach(l=>{let v=null;
+ if(l.id==="sat")v=showSat;
+ else if(KEEP.has(l.id))v=null;
+ else if(l.type==="fill-extrusion"||/build/i.test(l.id))v=!old&&(l.type==="fill-extrusion"||!showSat);
+ else if(l.type==="fill"||l.id==="hs")v=!showSat;
+ if(v!==null)map.setLayoutProperty(l.id,"visibility",v?"visible":"none")})}
 map.on("style.load",()=>{
  map.addSource("dem",{type:"raster-dem",tiles:["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],encoding:"terrarium",tileSize:256,maxzoom:13});
  const first=map.getStyle().layers.find(l=>l.type==="symbol");
@@ -60,21 +66,25 @@ map.on("style.load",()=>{
  map.addLayer({id:"districts",type:"line",source:"openmaptiles","source-layer":"boundary",minzoom:5,
   filter:["all",[">=",["get","admin_level"],5],["<=",["get","admin_level"],6],["!=",["get","maritime"],1]],
   paint:{"line-color":"#c0392b","line-width":1,"line-dasharray":[3,2],"line-opacity":0.8}},first&&first.id);
- map.addSource("sat",{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+ map.addSource("sat",{type:"raster",tiles:[IMG[$("imgsel").value]],tileSize:256,maxzoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
  const f0=map.getStyle().layers.find(l=>l.type!=="background");
  map.addLayer({id:"sat",type:"raster",source:"sat"},f0.id);
  map.addSource("hist",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
  map.addLayer({id:"hfill",type:"fill",source:"hist",layout:{visibility:"none"},paint:{"fill-color":["get","col"],"fill-opacity":0.28}},first&&first.id);
  map.addLayer({id:"hline",type:"line",source:"hist",layout:{visibility:"none"},paint:{"line-color":"#ffffff","line-width":1.2,"line-opacity":0.8}},first&&first.id);
  map.addLayer({id:"hlab",type:"symbol",source:"hist",layout:{visibility:"none","text-field":["get","NAME"],"text-font":font,"text-size":12},paint:{"text-color":"#fff","text-halo-color":"#000","text-halo-width":1.2}});
- labels();applySat();histLoad();
+ map.addSource("cmask",{type:"geojson",data:EMPTY});map.addSource("cline",{type:"geojson",data:EMPTY});
+ map.addLayer({id:"cmask",type:"fill",source:"cmask",paint:{"fill-color":"#000","fill-opacity":0.5}},first&&first.id);
+ map.addLayer({id:"cline",type:"line",source:"cline",paint:{"line-color":"#ffb347","line-width":2.5}},first&&first.id);
+ labels();applyVis();histLoad();loadPlaces();
 });
 
 // ---------- ඉතිහාස සීමා (වසර අනුව) ----------
 const HBASE="https://cdn.jsdelivr.net/gh/aourednik/historical-basemaps@master/geojson/world_";
 const HY=[-3000,-2000,-1500,-1000,-900,-800,-700,-600,-500,-400,-323,-300,-200,-100,-1,100,200,300,400,500,600,700,800,900,1000,1100,1200,1279,1300,1400,1492,1500,1530,1600,1650,1700,1715,1783,1800,1815,1880,1900,1914,1920,1930,1938,1945,1960,1994];
 const tag=y=>y<0?"bc"+(-y):""+y;
-let hCur=null,hT,Y=2026,C=null;
+let hCur=null,hT,Y=2026,C=null,old=false;
+function eraCheck(){const n=!!C&&Y<1900;if(n!==old){old=n;$("atlas").classList.toggle("old",old);if(map.isStyleLoaded())applyVis();loadPlaces()}}
 function histLoad(){clearTimeout(hT);hT=setTimeout(async()=>{
  if(!map.getSource("hist"))return;
  const show=!!C&&Y<1995;
@@ -91,7 +101,7 @@ const FILT=new Set(TY.map(x=>x[0]));let MK=[],playT=null;
 function tilt(el){el.onmousemove=ev=>{const r=el.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width-.5,y=(ev.clientY-r.top)/r.height-.5;
  el.style.transform=`perspective(700px) rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.02)`};el.onmouseleave=()=>el.style.transform=""}
 function card(r){const ty=TY.find(x=>x[0]===r.t)||TY[2],fig=r.t==="ruler"||r.t==="person";
- return `<article class="k3 ${fig?"king":""}" data-id="${esc(r.id)}">${r.img?`<div class="fig"><img src="${esc(r.img)}" alt=""></div>`:(fig?`<div class="fig ph">${ty[1]}</div>`:"")}<small>${ty[1]} ${ty[2][L]} · ${yr(r.s)} – ${yr(r.e)}</small><h3>${esc(pick(r.ti))}</h3><p>${esc(pick(r.tx))}</p></article>`}
+ return `<article class="k3 ${fig?"king":""}" data-id="${esc(r.id)}">${r.img?`<div class="fig"><img src="${esc(r.img)}" alt=""></div>`:(fig?`<div class="fig ph">${ty[1]}</div>`:"")}<small>${ty[1]} ${ty[2][L]} · ${yr(r.s)} – ${yr(r.e)}</small><h3>${esc(pick(r.ti))}</h3><p>${esc(pick(r.tx))}</p><button class="wbtn" data-rid="${esc(r.id)}">${T.ri[L]}</button></article>`}
 async function fillImgs(rs){for(const r of rs){if(r.img||!["ruler","person","place"].includes(r.t))continue;
  try{const w=await wiki((r.ti[2]||pick(r.ti))+" "+C.n,"en");const im=w.find(x=>x.i);const el=document.querySelector(`#tcards [data-id="${r.id}"]`);
   if(im&&el){const f=el.querySelector(".fig");const html=`<img src="${esc(im.i)}" alt="">`;
@@ -101,7 +111,7 @@ function markers(rs){MK.forEach(m=>m.remove());MK=[];
   const el=document.createElement("div");el.className="rec";el.textContent=ty[1];
   MK.push(new maplibregl.Marker({element:el}).setLngLat([+r.lng,+r.lat]).setPopup(new maplibregl.Popup({offset:16}).setHTML(`<b>${esc(pick(r.ti))}</b><br>${esc(pick(r.tx).slice(0,180))}`)).addTo(map))})}
 function curRecs(){return C?DB.filter(r=>r.c===C.n&&r.s<=Y&&Y<=r.e&&FILT.has(r.t)):[]}
-function tmUpdate(){if(!C||!$("yera"))return;
+function tmUpdate(){if(!C||!$("yera"))return;eraCheck();
  $("yera").textContent=yr(Y)+" · "+ERAS[eraIdx(Y)][1][L];
  const rs=curRecs();
  $("tcards").innerHTML=rs.length?`<div class="cards">${rs.map(card).join("")}</div>`:`<p class="note">${TMS.none[L]}</p>`;
@@ -123,7 +133,7 @@ function tmSkeleton(){const b=$("tmTime");
  $("tchips").querySelectorAll("button").forEach(bt=>bt.onclick=()=>{const k=bt.dataset.k;FILT.has(k)?FILT.delete(k):FILT.add(k);bt.classList.toggle("on");tmUpdate()});
  $("wk").onclick=async()=>{$("wcards").innerHTML=`<p class="note">…</p>`;
   try{const r=await wiki((Y<0?(-Y)+" BC ":Y+" ")+C.n+" history",LC[L]);
-   $("wcards").innerHTML=r.map(d=>`<article class="k3">${d.i?`<img src="${esc(d.i)}" alt="" loading="lazy">`:""}<h3>${esc(d.t)}</h3><p>${esc(d.x)}</p>${d.u?`<a href="${esc(d.u)}" target="_blank" rel="noopener">→</a>`:""}</article>`).join("");
+   $("wcards").innerHTML=r.map(d=>`<article class="k3">${d.i?`<img src="${esc(d.i)}" alt="" loading="lazy">`:""}<h3>${esc(d.t)}</h3><p>${esc(d.x)}</p>${d.u?`<a href="${esc(d.u)}" target="_blank" rel="noopener">→</a> `:""}<button class="wbtn" data-rd="${esc(d.en)}">${T.ri[L]}</button></article>`).join("");
    $("wcards").querySelectorAll(".k3").forEach(tilt)}catch(e){$("wcards").innerHTML=""}};
  tmUpdate()}
 
@@ -132,7 +142,7 @@ let unlocked=false,editId=null,aImg="",pickMode=false;
 const aVal=id=>$(id).value.trim();
 function aFill(r){editId=r?r.id:null;$("a_c").value=r?r.c:(C?C.n:"");$("a_t").value=r?r.t:"ruler";$("a_s").value=r?r.s:"";$("a_e").value=r?r.e:"";
  for(let i=0;i<3;i++){$("a_ti"+i).value=r?(r.ti[i]||""):"";$("a_tx"+i).value=r?(r.tx[i]||""):""}
- $("a_img").value=r&&r.img&&!r.img.startsWith("data:")?r.img:"";aImg=r&&r.img&&r.img.startsWith("data:")?r.img:"";$("a_lat").value=r?r.lat:"";$("a_lng").value=r?r.lng:""}
+ $("a_st").value=r?(r.st||""):"";$("a_img").value=r&&r.img&&!r.img.startsWith("data:")?r.img:"";aImg=r&&r.img&&r.img.startsWith("data:")?r.img:"";$("a_lat").value=r?r.lat:"";$("a_lng").value=r?r.lng:""}
 function aList(){const cs=[...new Set(DB.map(r=>r.c))];$("a_cl").innerHTML=cs.map(c=>`<option value="${esc(c)}">`).join("");
  const c=C?C.n:aVal("a_c");const rs=DB.filter(r=>r.c===c).sort((a,b)=>a.s-b.s);
  $("alist").innerHTML=rs.map(r=>`<div class="row" style="align-items:center"><span style="flex:4">${(TY.find(x=>x[0]===r.t)||TY[2])[1]} ${esc(pick(r.ti))} <small>(${r.s}…${r.e})</small></span><button data-ed="${esc(r.id)}">✏️</button><button data-del="${esc(r.id)}">🗑️</button></div>`).join("")||"<p class='note'>—</p>";
@@ -141,7 +151,7 @@ function aList(){const cs=[...new Set(DB.map(r=>r.c))];$("a_cl").innerHTML=cs.ma
 $("a_t").innerHTML=TY.map(x=>`<option value="${x[0]}">${x[1]} ${x[2][2]}</option>`).join("");
 $("a_save").onclick=()=>{const c=aVal("a_c"),s=parseInt($("a_s").value);if(!c||isNaN(s)||(!aVal("a_ti0")&&!aVal("a_ti1")&&!aVal("a_ti2"))){alert("Country, start year and a title are required.");return}
  let e=parseInt($("a_e").value);if(isNaN(e)||e<s)e=s+25;
- const r={id:editId||"u"+Date.now(),c,t:$("a_t").value,s,e,ti:[0,1,2].map(i=>aVal("a_ti"+i)),tx:[0,1,2].map(i=>aVal("a_tx"+i)),img:aVal("a_img")||aImg,lat:aVal("a_lat"),lng:aVal("a_lng")};
+ const r={id:editId||"u"+Date.now(),c,t:$("a_t").value,s,e,ti:[0,1,2].map(i=>aVal("a_ti"+i)),tx:[0,1,2].map(i=>aVal("a_tx"+i)),img:aVal("a_img")||aImg,st:$("a_st").value.trim(),lat:aVal("a_lat"),lng:aVal("a_lng")};
  const i=DB.findIndex(x=>x.id===r.id);i>=0?DB[i]=r:DB.push(r);saveDB();aFill(null);aList();tmUpdate()};
 $("a_clear").onclick=()=>aFill(null);
 $("a_pick").onclick=()=>{pickMode=true;$("err").textContent="📍 Click the map to set the location"};
@@ -154,24 +164,34 @@ document.querySelectorAll(".tabs [data-t]").forEach(b=>b.onclick=()=>{const t=b.
   if(!pin){const p=prompt("Set an Admin PIN (stored in this browser only):");if(!p)return;try{localStorage.setItem("wh-pin",p)}catch(e){}}
   else if(prompt("Admin PIN:")!==pin){alert("Wrong PIN");return}unlocked=true}
  document.querySelectorAll(".tabs [data-t]").forEach(x=>x.classList.toggle("on",x===b));
- $("tmTime").hidden=t!=="time";$("tmAdmin").hidden=t!=="admin";if(t==="admin"){aFill(null);aList()}});
+ $("tmTime").hidden=t!=="time";$("tmAdmin").hidden=t!=="admin";$("tmExp").hidden=t!=="explore";if(t==="admin"){aFill(null);aList()}});
 $("tmmin").onclick=()=>$("tm").classList.toggle("min");
 
 // ---------- Wikipedia + රට Explorer (පහළ කොටස) ----------
-const CATS=[["👑",["රජවරු","அரசர்கள்","Rulers"],"rulers monarchs kings of"],["🎭",["සංස්කෘතිය","பண்பாடு","Culture"],"culture traditions of"],["🏛️",["දේශපාලනය","அரசியல்","Politics"],"politics government of"],["🌿",["පරිසරය","சூழல்","Nature"],"geography climate environment of"],["🏯",["ගොඩනැගිලි","கட்டிடங்கள்","Buildings"],"architecture monuments landmarks of"],["🐘",["සත්ත්ව","விலங்குகள்","Animals"],"wildlife fauna of"],["⚔️",["සටන්","போர்கள்","Battles"],"military history battles wars of"],["⭐",["සිදුවීම්","நிகழ்வுகள்","Events"],"history important events of"]];
-const X={c:null,era:0,cat:3,cache:{}};const ex=$("ex");
+const CATS=[["👑",["රජවරු","அரசர்கள்","Rulers"],"rulers monarchs kings of"],["🎭",["සංස්කෘතිය","பண்பாடு","Culture"],"culture traditions of"],["🏛️",["දේශපාලනය","அரசியல்","Politics"],"politics government of"],["🌿",["පරිසරය","சூழல்","Nature"],"geography climate environment of"],["🏯",["ගොඩනැගිලි","கட்டிடங்கள்","Buildings"],"architecture monuments landmarks of"],["🐘",["සත්ත්ව","விலங்குகள்","Animals"],"wildlife fauna of"],["⚔️",["සටන්","போர்கள்","Battles"],"military history battles wars of"],["⭐",["සිදුවීම්","நிகழ்வுகள்","Events"],"history important events of"],["📖",["පොත්","நூல்கள்","Books"],"literature books chronicles authors of"],["🧑",["පුද්ගලයන්","மக்கள்","People"],"notable people historical figures of"]];
+const X={c:null,era:0,cat:3,cache:{}};const ex=$("tmExp");
 const ET={load:["පූරණය වෙමින්…","ஏற்றுகிறது…","Loading…"],none:["ප්‍රතිඵල නැහැ.","முடிவுகள் இல்லை.","No results."],err:["Internet/Wikipedia ගැටලුවක්.","இணையம்/விக்கிப்பீடியா சிக்கல்.","Internet/Wikipedia problem."],more:["තව කියවන්න →","மேலும் →","Read more →"],pick:["සිතියමේ ඕනෑම රටක් ඔබන්න.","வரைபடத்தில் எந்த நாட்டையும் தொடவும்.","Tap any country on the map."]};
-async function wiki(q,code){
- const key=q+"|"+code;if(X.cache[key])return X.cache[key];
- const s=await (await fetch("https://en.wikipedia.org/w/rest.php/v1/search/page?limit=4&q="+encodeURIComponent(q))).json();
- const out=[];
- for(const p of (s.pages||[]).slice(0,4)){
-  let host="en",title=p.key;
-  if(code!=="en"){try{const r=await (await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=langlinks&lllang=${code}&format=json&origin=*&titles=${encodeURIComponent(p.title)}`)).json();
-   const pg=Object.values(r.query.pages)[0];if(pg.langlinks&&pg.langlinks[0]){host=code;title=pg.langlinks[0]["*"]}}catch(e){}}
-  try{const d=await (await fetch(`https://${host}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`)).json();
-   if(d.extract)out.push({t:d.title,x:d.extract,i:(d.thumbnail&&d.thumbnail.source)||(p.thumbnail&&("https:"+p.thumbnail.url))||"",u:d.content_urls&&d.content_urls.desktop.page,h:host})}catch(e){}}
- X.cache[key]=out;return out}
+async function J(url,ms=9000){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);try{return await (await fetch(url,{signal:c.signal})).json()}finally{clearTimeout(t)}}
+async function wiki(q,code,chars=1400){
+ const key=q+"|"+code+"|"+chars;if(X.cache[key])return X.cache[key];
+ const r=await J("https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=search&gsrlimit=4&gsrsearch="+encodeURIComponent(q)+"&prop=extracts|pageimages|langlinks|info&exintro=1&explaintext=1&exchars="+chars+"&exlimit=max&piprop=thumbnail&pithumbsize=700&lllang="+code+"&lllimit=max&inprop=url");
+ let out=Object.values((r.query&&r.query.pages)||{}).sort((a,b)=>a.index-b.index).map(p=>({t:p.title,en:p.title,x:p.extract||"",i:(p.thumbnail&&p.thumbnail.source)||"",u:p.fullurl,h:"en",ll:p.langlinks&&p.langlinks[0]&&p.langlinks[0]["*"]}));
+ if(code!=="en"){const tl=out.filter(o=>o.ll);
+  if(tl.length){try{const r2=await J(`https://${code}.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=extracts|pageimages|info&exintro=1&explaintext=1&exchars=${chars}&exlimit=max&piprop=thumbnail&pithumbsize=700&inprop=url&titles=`+encodeURIComponent(tl.map(o=>o.ll).join("|")));
+   const m={};Object.values(r2.query.pages).forEach(p=>m[p.title]=p);
+   out.forEach(o=>{const p=o.ll&&m[o.ll];if(p&&p.extract){o.t=p.title;o.x=p.extract;o.h=code;o.u=p.fullurl||o.u;if(p.thumbnail&&!o.i)o.i=p.thumbnail.source}})}catch(e){}}}
+ out=out.filter(o=>o.x);X.cache[key]=out;return out}
+async function readStory(en){
+ $("reader").hidden=false;$("rbody").innerHTML=`<p class="note">${ET.load[L]}</p>`;
+ let host="en",title=en;const code=LC[L];
+ try{
+  if(code!=="en"){const r=await J(`https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&redirects=1&prop=langlinks&lllang=${code}&titles=${encodeURIComponent(en)}`);
+   const p=Object.values(r.query.pages)[0];if(p.langlinks&&p.langlinks[0]){host=code;title=p.langlinks[0]["*"]}}
+  const r=await J(`https://${host}.wikipedia.org/w/api.php?format=json&origin=*&action=query&redirects=1&prop=extracts|pageimages|info&explaintext=1&exlimit=1&piprop=thumbnail&pithumbsize=800&inprop=url&titles=${encodeURIComponent(title)}`,20000);
+  const p=Object.values(r.query.pages)[0];
+  const body=(p.extract||"").split("\n").filter(Boolean).map(l=>/^==/.test(l)?`<h4>${esc(l.replace(/=+/g,"").trim())}</h4>`:`<p>${esc(l)}</p>`).join("");
+  $("rbody").innerHTML=`${p.thumbnail?`<img class="rimg" src="${esc(p.thumbnail.source)}" alt="">`:""}<h2>${esc(p.title)}</h2>${body}<p><a href="${esc(p.fullurl||"#")}" target="_blank" rel="noopener">Wikipedia ↗</a></p>`
+ }catch(e){$("rbody").innerHTML=`<p class="note">${ET.err[L]}</p>`}}
 async function exRender(){
  if(!X.c){ex.innerHTML=`<p class="note">${ET.pick[L]}</p>`;return}
  const cat=CATS[X.cat],era=ERAS[X.era];
@@ -185,13 +205,20 @@ async function exRender(){
  const q=(useEra?era[0]+" ":"")+cat[2]+" "+X.c.n;
  const mine=X.c.n+"|"+X.era+"|"+X.cat+"|"+L;X.last=mine;
  try{const r=await wiki(q,LC[L]);if(X.last!==mine)return;
-  $("cards").innerHTML=r.length?r.map(d=>`<article class="k3">${d.i?`<img src="${esc(d.i)}" alt="" loading="lazy">`:""}<h3>${esc(d.t)}</h3><p>${esc(d.x)}</p>${d.u?`<a href="${esc(d.u)}" target="_blank" rel="noopener">${ET.more[L]}</a>`:""}</article>`).join(""):`<p class="note">${ET.none[L]}</p>`;
+  $("cards").innerHTML=r.length?r.map(d=>`<article class="k3">${d.i?`<img src="${esc(d.i)}" alt="" loading="lazy">`:""}<h3>${esc(d.t)}</h3><p>${esc(d.x)}</p>${d.u?`<a href="${esc(d.u)}" target="_blank" rel="noopener">${ET.more[L]}</a> `:""}<button class="wbtn" data-rd="${esc(d.en)}">${T.ri[L]}</button></article>`).join(""):`<p class="note">${ET.none[L]}</p>`;
   $("cards").querySelectorAll(".k3").forEach(tilt)}
  catch(e){$("cards").innerHTML=`<p class="note">${ET.err[L]}</p>`}}
 
 // ---------- රටක් තේරීම ----------
-function openCountry(n,d,bbox){C={n,d:d||n};X.c=C;$("tm").hidden=false;tmSkeleton();histLoad();exRender();
- if(bbox)map.fitBounds([[bbox[2],bbox[0]],[bbox[3],bbox[1]]],{padding:60,duration:1500})}
+function setTerrain(on){terrain=on;$("b3d").classList.toggle("on",on);map.setTerrain(on?{source:"dem",exaggeration:1.6}:null);
+ try{map.setSky(on?{"sky-color":"#88C6FC","horizon-color":"#ffffff","fog-color":"#dfe8f5","sky-horizon-blend":0.5,"horizon-fog-blend":0.5,"fog-ground-blend":0.5}:{})}catch(e){}}
+function setMask(g){if(!map.getSource("cmask"))return;
+ if(!g){map.getSource("cmask").setData(EMPTY);map.getSource("cline").setData(EMPTY);return}
+ const ps=g.type==="Polygon"?[g.coordinates]:g.type==="MultiPolygon"?g.coordinates:[];
+ map.getSource("cmask").setData({type:"Feature",geometry:{type:"Polygon",coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]],...ps.map(p=>p[0])]}});
+ map.getSource("cline").setData({type:"Feature",geometry:g})}
+function openCountry(n,d,bbox,geom){C={n,d:d||n};X.c=C;$("tm").hidden=false;$("bworld").hidden=false;tmSkeleton();eraCheck();histLoad();exRender();setMask(geom);setTerrain(true);
+ if(bbox)map.fitBounds([[bbox[2],bbox[0]],[bbox[3],bbox[1]]],{padding:60,duration:1800,pitch:50})}
 const HOT={lk:[7.8,80.7],in:[22,78],eg:[27,30],cn:[35,105],gr:[41,14],uk:[54,-2]};
 const NAMES={lk:"Sri Lanka",in:"India",eg:"Egypt",cn:"China",gr:"Greece",uk:"United Kingdom"};
 function panel(k){const p=$("p");
@@ -205,18 +232,15 @@ for(const k in HOT){const el=document.createElement("div");
 map.on("click",async e=>{
  if(pickMode){pickMode=false;$("a_lat").value=e.lngLat.lat.toFixed(4);$("a_lng").value=e.lngLat.lng.toFixed(4);$("err").textContent="";return}
  if(e.originalEvent.target.closest(".maplibregl-marker"))return;
- try{const q=l=>fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=3&accept-language=${l}&lat=${e.lngLat.lat}&lon=${e.lngLat.lng}`).then(r=>r.json());
-  const r=await q("en");
+ try{const q=(l,pg)=>fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=3&accept-language=${l}${pg?"&polygon_geojson=1&polygon_threshold=0.03":""}&lat=${e.lngLat.lat}&lon=${e.lngLat.lng}`).then(r=>r.json());
+  const r=await q("en",1);
   if(r.address&&r.address.country){let loc=r.address.country;
    if(L<2){try{const r2=await q(LC[L]);loc=r2.address.country||loc}catch(x){}}
-   openCountry(r.address.country,loc,(r.boundingbox||[]).map(Number).length==4?r.boundingbox.map(Number):null)}}catch(x){}});
+   openCountry(r.address.country,loc,(r.boundingbox||[]).map(Number).length==4?r.boundingbox.map(Number):null,r.geojson)}}catch(x){}});
 
 // ---------- බොත්තම් ----------
-$("b3d").onclick=()=>{terrain=!terrain;$("b3d").classList.toggle("on",terrain);
- map.setTerrain(terrain?{source:"dem",exaggeration:1.5}:null);
- try{map.setSky(terrain?{"sky-color":"#88C6FC","horizon-color":"#ffffff","fog-color":"#dfe8f5","sky-horizon-blend":0.5,"horizon-fog-blend":0.5,"fog-ground-blend":0.5}:{})}catch(e){}
- map.easeTo({pitch:terrain?65:0,duration:1200})};
-$("bsat").onclick=()=>{sat=!sat;$("bsat").classList.toggle("on",sat);applySat()};
+$("b3d").onclick=()=>{setTerrain(!terrain);map.easeTo({pitch:terrain?65:0,duration:1200})};
+$("bsat").onclick=()=>{sat=!sat;$("bsat").classList.toggle("on",sat);applyVis()};
 $("bhome").onclick=()=>map.flyTo({center:[80.77,7.95],zoom:7.5,pitch:0,bearing:0});
 const stage=$("stage");
 $("bfs").onclick=()=>{
@@ -231,10 +255,31 @@ map.on("moveend",orbit);
 $("bfly").onclick=()=>{spin=!spin;$("bfly").classList.toggle("on",spin);if(spin)orbit();else map.stop()};
 $("tour").onchange=e=>{const p=PL[e.target.value-1];if(p)map.flyTo({center:[p[3],p[4]],zoom:p[5],pitch:65,bearing:20,speed:.7})};
 
+// ---------- ස්ථාන (Wikipedia geosearch), ලෝකයට ආපසු, කතා කියවනය, ඡායාරූප මූලාශ්‍රය ----------
+let PLM=[],plT,placesOn=true;
+function loadPlaces(){clearTimeout(plT);plT=setTimeout(async()=>{
+ PLM.forEach(m=>m.remove());PLM=[];
+ if(!placesOn||map.getZoom()<11||(C&&Y<1900))return;
+ const c=map.getCenter();
+ try{const r=await J(`https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&list=geosearch&gscoord=${c.lat}|${c.lng}&gsradius=10000&gslimit=40`);
+  (r.query.geosearch||[]).forEach(g=>{const el=document.createElement("div");el.textContent="📍";el.title=g.title;el.style.cssText="font-size:18px;cursor:pointer;filter:drop-shadow(0 1px 2px #000)";
+   el.onclick=ev=>{ev.stopPropagation();readStory(g.title)};
+   PLM.push(new maplibregl.Marker({element:el}).setLngLat([g.lon,g.lat]).addTo(map))})}catch(e){}},700)}
+map.on("moveend",loadPlaces);
+$("bplace").onclick=()=>{placesOn=!placesOn;$("bplace").classList.toggle("on",placesOn);loadPlaces()};
+$("bworld").onclick=()=>{C=null;X.c=null;setMask(null);$("tm").hidden=true;$("bworld").hidden=true;MK.forEach(m=>m.remove());MK=[];setTerrain(false);eraCheck();histLoad();exRender();map.flyTo({center:[20,20],zoom:2,pitch:0,bearing:0})};
+$("imgsel").onchange=()=>{try{map.getSource("sat").setTiles([IMG[$("imgsel").value]])}catch(e){$("err").textContent="⚠️ imagery switch failed"}};
+$("rclose").onclick=()=>$("reader").hidden=true;
+$("stage").addEventListener("click",e=>{const b=e.target.closest("[data-rd],[data-rid]");if(!b)return;
+ if(b.dataset.rd){readStory(b.dataset.rd);return}
+ const r=DB.find(x=>x.id===b.dataset.rid);if(!r)return;
+ if(r.st){$("reader").hidden=false;$("rbody").innerHTML=`<h2>${esc(pick(r.ti))}</h2>`+r.st.split("\n").filter(Boolean).map(l=>`<p>${esc(l)}</p>`).join("")+`<button class="wbtn" data-rd="${esc(r.ti[2]||pick(r.ti))}">Wikipedia 📖</button>`}
+ else readStory(r.ti[2]||pick(r.ti))});
+
 // ---------- භාෂාව ----------
 function lang(n){L=n;try{localStorage.setItem("wh-lang",n)}catch(e){}
  document.documentElement.lang=LC[n];
- for(const k of["ttl","sub","note","bfs","bsat","b3d","bfly"])$(k).textContent=T[k][n];
+ for(const k of["ttl","sub","note","bfs","bsat","b3d","bfly","bplace","bworld"])$(k).textContent=T[k][n];
  $("tour").options[0].textContent=T.tour[n];PL.forEach((p,i)=>$("tour").options[i+1].textContent=p[n]);
  document.querySelectorAll("#langs button").forEach((b,i)=>b.classList.toggle("on",i==n));
  if(map.isStyleLoaded())labels();

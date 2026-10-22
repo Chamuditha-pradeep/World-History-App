@@ -29,6 +29,13 @@
 .rec{font-size:26px;cursor:pointer;filter:drop-shadow(0 2px 3px #000)}
 .maplibregl-popup-content{color:#111}
 #ex h2{margin:0 0 6px}
+#atlas.old canvas{filter:sepia(.7) saturate(.85) contrast(1.05)}
+#stage:fullscreen #tm,#stage.fakefs #tm{width:470px}
+#reader{position:absolute;inset:8px 410px 8px 8px;z-index:7;background:var(--card);border-radius:12px;padding:16px 18px;overflow:auto;box-shadow:0 8px 30px #0008}
+#stage:fullscreen #reader,#stage.fakefs #reader{right:490px}
+#reader p{line-height:1.7}#reader #rclose{position:sticky;top:0;float:right}
+.rimg{float:right;max-width:40%;margin:0 0 8px 14px;border-radius:10px;box-shadow:0 10px 24px #0008}
+@media(max-width:700px){#reader{inset:8px}}
 @media(max-width:700px){#tm{left:8px;right:8px;top:auto;width:auto;max-height:55%}.bar{max-width:100%}}
 </style>
 </head><body><main>
@@ -37,13 +44,14 @@
 <div id="stage">
  <div id="atlas"></div>
  <div class="bar">
-  <button id="bfs"></button><button id="bsat" class="on"></button><button id="b3d"></button><button id="bfly"></button><button id="bhome">🏠</button>
+  <button id="bfs"></button><button id="bsat" class="on"></button><button id="b3d"></button><button id="bfly"></button><button id="bplace" class="on"></button><button id="bworld" hidden></button><select id="imgsel"><option value="std">🛰️ Esri</option><option value="clarity">🛰️ Clarity (new)</option></select><button id="bhome">🏠</button>
   <select id="tour"><option value="">📍</option><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option><option value="6"></option><option value="7"></option><option value="8"></option><option value="9"></option></select>
  </div>
  <aside id="tm" hidden>
-  <div class="tabs"><button data-t="time" class="on">🕰️</button><button data-t="admin">🔧 Admin</button><button id="tmmin">▁</button></div>
+  <div class="tabs"><button data-t="time" class="on">🕰️</button><button data-t="explore">📖</button><button data-t="admin">🔧 Admin</button><button id="tmmin">▁</button></div>
   <div id="tmBody">
    <div id="tmTime"></div>
+   <div id="tmExp" hidden></div>
    <div id="tmAdmin" hidden>
     <form id="af" onsubmit="return false">
      <input id="a_c" placeholder="Country (English) e.g. Sri Lanka" list="a_cl"><datalist id="a_cl"></datalist>
@@ -51,7 +59,7 @@
      <div class="row"><input id="a_s" type="number" placeholder="Start year (BC = -)"><input id="a_e" type="number" placeholder="End year"></div>
      <input id="a_ti0" placeholder="සිංහල නම"><input id="a_ti1" placeholder="தமிழ் பெயர்"><input id="a_ti2" placeholder="English title">
      <textarea id="a_tx0" placeholder="සිංහල විස්තරය"></textarea><textarea id="a_tx1" placeholder="தமிழ் விளக்கம்"></textarea><textarea id="a_tx2" placeholder="English description"></textarea>
-     <input id="a_img" placeholder="Image URL (AI/3D image link) or upload ↓"><input id="a_file" type="file" accept="image/*">
+     <textarea id="a_st" placeholder="Full story / කතාව / முழு கதை (optional)"></textarea><input id="a_img" placeholder="Image URL (AI/3D image link) or upload ↓"><input id="a_file" type="file" accept="image/*">
      <div class="row"><input id="a_lat" placeholder="lat"><input id="a_lng" placeholder="lng"><button id="a_pick" type="button">📍 Map</button></div>
      <div class="row"><button id="a_save" type="button">💾 Save</button><button id="a_clear" type="button">✖ Clear</button></div>
     </form>
@@ -60,12 +68,12 @@
    </div>
   </div>
  </aside>
+ <div id="reader" hidden><button id="rclose" class="wbtn">✕</button><div id="rbody"></div></div>
 </div>
 <p class="note" id="err"></p>
 <p><a href="history.html">🕰️ ඉතිහාස ගෝලය / History globe / வரலாற்று உலகம்</a></p>
 <p class="note" id="note"></p>
 <div class="card" id="p"></div>
-<section class="card" id="ex"></section>
 </main>
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="data.js"></script>
