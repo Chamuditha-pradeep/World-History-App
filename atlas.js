@@ -5,16 +5,16 @@ const T={
 ttl:["🗺️ 3D ලෝක සිතියම","🗺️ 3D உலக வரைபடம்","🗺️ 3D World Atlas"],
 sub:["ඇදලා, හැරවලා, zoom කරන්න. ලොකුවට zoom කළාම පළාත්/දිස්ත්‍රික්ක, ගංගා, කඳු, මුහුද නම් පෙනෙනවා.","இழுத்து, சுழற்றி, பெரிதாக்குங்கள். பெரிதாக்கினால் மாகாணங்கள்/மாவட்டங்கள், ஆறுகள், மலைகள், கடல் பெயர்கள் தெரியும்.","Drag, rotate and zoom. Zoom in to see provinces/districts, rivers, mountains and seas by name."],
 note:["සටහන: නම් භාෂාව ලබා දෙන්නේ OpenStreetMap data වල තියෙන පරිදියි. සිංහල/දෙමළ නම් නැති තැන්වල ඉංග්‍රීසි/ප්‍රාදේශීය නම පෙනෙනවා.","குறிப்பு: பெயர்கள் OpenStreetMap தரவில் உள்ளபடி காட்டப்படும். சிங்களம்/தமிழ் பெயர் இல்லாத இடங்களில் ஆங்கில/உள்ளூர் பெயர் தெரியும்.","Note: labels come from OpenStreetMap data; where no Sinhala/Tamil name exists, the English/local name is shown."],
-b3d:["⛰️ 3D භූමිය","⛰️ 3D நிலப்பரப்பு","⛰️ 3D terrain"],bglobe:["🌍 ගෝලය","🌍 உலகக் கோளம்","🌍 Globe"]};
+b3d:["⛰️ 3D භූමිය","⛰️ 3D நிலப்பரப்பு","⛰️ 3D terrain"],bsat:["🛰️ චන්ද්‍රිකා","🛰️ செயற்கைக்கோள்","🛰️ Satellite"],bfly:["✈️ පියාසර","✈️ பறக்க","✈️ Fly"],tour:["📍 ස්ථාන","📍 இடங்கள்","📍 Places"]};
 const HOT={lk:[7.8,80.7],in:[22,78],eg:[27,30],cn:[35,105],gr:[41,14],uk:[54,-2]};
-const map=new maplibre.Map({container:"atlas",style:"https://tiles.openfreemap.org/styles/liberty",center:[80.7,7.8],zoom:5,pitch:0,maxPitch:75});
+const map=new maplibre.Map({container:"atlas",style:"https://tiles.openfreemap.org/styles/liberty",center:[80.77,7.95],zoom:9,pitch:55,maxPitch:75});
 map.addControl(new maplibre.NavigationControl({visualizePitch:true}));
-let terrain=false,globe=true;
+let terrain=true,sat=true,spin=false;
 function labels(){const code=["si","ta","en"][L];
  map.getStyle().layers.forEach(l=>{if(l.type==="symbol"&&l.layout&&l.layout["text-field"])
   map.setLayoutProperty(l.id,"text-field",["coalesce",["get","name:"+code],["get","name:latin"],["get","name"]])})}
 map.on("style.load",()=>{
- try{map.setProjection({type:"globe"})}catch(e){}
+ 
  map.addSource("dem",{type:"raster-dem",tiles:["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],encoding:"terrarium",tileSize:256,maxzoom:13});
  const first=map.getStyle().layers.find(l=>l.type==="symbol");
  map.addLayer({id:"hs",type:"hillshade",source:"dem",paint:{"hillshade-exaggeration":0.5}},first&&first.id);
@@ -23,7 +23,14 @@ map.on("style.load",()=>{
   filter:["all",[">=",["get","admin_level"],5],["<=",["get","admin_level"],6],["!=",["get","maritime"],1]],
   paint:{"line-color":"#c0392b","line-width":1,"line-dasharray":[3,2],"line-opacity":0.8}},first&&first.id);
  labels();
+ map.addSource("sat",{type:"raster",tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],tileSize:256,maxzoom:18,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+ const f0=map.getStyle().layers.find(l=>l.type!=="background");
+ map.addLayer({id:"sat",type:"raster",source:"sat"},f0.id);
+ applySat();map.setTerrain({source:"dem",exaggeration:1.5});
 });
+function applySat(){map.getStyle().layers.forEach(l=>{
+ if(l.id==="sat")map.setLayoutProperty(l.id,"visibility",sat?"visible":"none");
+ else if(l.type==="fill"||l.id==="hs")map.setLayoutProperty(l.id,"visibility",sat?"none":"visible")})}
 function panel(k){const p=$("p");
  if(!k){p.innerHTML=`<b>${UI.pick[L]}</b><br><span class="note">${UI.hint[L]}</span>`;return}
  const d=D[k];p.innerHTML=`<b style="font-size:1.1rem">${d[0][L]}</b>`+d[1].map(x=>`<div class="ev"><b>${x[0]}</b><br>${x[1][L]}</div>`).join("")}
@@ -35,12 +42,12 @@ for(const k in HOT){const el=document.createElement("div");
 $("b3d").onclick=()=>{terrain=!terrain;$("b3d").classList.toggle("on",terrain);
  map.setTerrain(terrain?{source:"dem",exaggeration:1.5}:null);
  map.easeTo({pitch:terrain?65:0,duration:1200})};
-$("bglobe").onclick=()=>{globe=!globe;$("bglobe").classList.toggle("on",globe);
- map.setProjection({type:globe?"globe":"mercator"})};
-$("bhome").onclick=()=>map.flyTo({center:[80.7,7.8],zoom:7.5});
+$("bsat").onclick=()=>{sat=!sat;$("bsat").classList.toggle("on",sat);applySat()};
+$("bhome").onclick=()=>map.flyTo({center:[80.77,7.95],zoom:9,pitch:55,bearing:0});
 function lang(n){L=n;try{localStorage.setItem("wh-lang",n)}catch(e){}
  document.documentElement.lang=["si","ta","en"][n];
- for(const k of["ttl","sub","note","b3d","bglobe"])$(k).textContent=T[k][n];
+ for(const k of["ttl","sub","note","b3d","bsat","bfly"])$(k).textContent=T[k][n];
+ $("tour").options[0].textContent=T.tour[n];PL.forEach((p,i)=>$("tour").options[i+1].textContent=p[n]);
  document.querySelectorAll("#langs button").forEach((b,i)=>b.classList.toggle("on",i==n));
  if(map.isStyleLoaded())labels();panel(cur)}
 document.querySelectorAll("#langs button").forEach(b=>b.onclick=()=>lang(+b.dataset.l));
@@ -96,5 +103,10 @@ map.on("click",async e=>{if(e.originalEvent.target.closest(".maplibregl-marker")
   if(r.address&&r.address.country){const en=r.address.country;
    let loc=en;try{const r2=await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=3&accept-language=${["si","ta","en"][L]}&lat=${e.lngLat.lat}&lon=${e.lngLat.lng}`)).json();loc=r2.address.country||en}catch(x){}
    openCountry(en,loc)}}catch(x){}});
+const PL=[["සීගිරිය","சிகிரியா","Sigiriya",80.7601,7.957,15.5],["එවරස්ට් කන්ද","எவரெஸ்ட்","Mount Everest",86.925,27.988,12],["ගීසා පිරමීඩ","கிசா பிரமிடுகள்","Giza Pyramids",31.1342,29.9792,15.5],["ග්‍රෑන්ඩ් කැනියන්","கிராண்ட் கேன்யன்","Grand Canyon",-112.113,36.107,12.5],["මාචු පිචු","மச்சு பிச்சு","Machu Picchu",-72.545,-13.163,15],["බුර්ජ් ඛලීෆා","புர்ஜ் கலீஃபா","Burj Khalifa",55.2744,25.1972,15.5],["ෆුජි කන්ද","ஃபுஜி மலை","Mount Fuji",138.7274,35.3606,12],["ටෝකියෝ","டோக்கியோ","Tokyo",139.767,35.681,15],["නිව්යෝක්","நியூயார்க்","New York",-74.0134,40.7061,15.5]];
+function orbit(){if(spin)map.easeTo({bearing:map.getBearing()+60,duration:8000,easing:x=>x})}
+map.on("moveend",orbit);
+$("bfly").onclick=()=>{spin=!spin;$("bfly").classList.toggle("on",spin);if(spin)orbit();else map.stop()};
+$("tour").onchange=e=>{const p=PL[e.target.value-1];if(p)map.flyTo({center:[p[3],p[4]],zoom:p[5],pitch:65,bearing:20,speed:.7})};
 const _lang=lang;lang=function(n){_lang(n);exRender()};
 lang(L);
